@@ -16,9 +16,10 @@ def create_model(tau, ni, nh):
 
 if __name__ == '__main__':
 
-    filename = 'model002.hdf5'
+    model_filename = 'model002.hdf5'
+    output_filename = 'model002.csv'
 
-    inputs = ['b', 'bz', 'n', 'v']
+    inputs = ['bz', 'n', 'v']
     target = ['dst']
 
     train_years, val_years, test_years = [2000], [2002], [2001]
@@ -38,12 +39,12 @@ if __name__ == '__main__':
 
     res = model.fit(x_train, y_train,
                     validation_data=(x_val, y_val),
-                    callbacks=[tf.keras.callbacks.ModelCheckpoint(filename, save_best_only=True)],
+                    callbacks=[tf.keras.callbacks.ModelCheckpoint(model_filename, save_best_only=True)],
                     batch_size=1000,
                     epochs=1000)
     pd.DataFrame(res.history).plot(logy=True)
 
-    model_best = tf.keras.models.load_model(filename)
+    model_best = tf.keras.models.load_model(model_filename)
 
     x = create_input(data, inputs, scaler_input, tau)
 
@@ -54,12 +55,13 @@ if __name__ == '__main__':
     z_best = pd.concat([data['dst'],
                         pd.Series(scaler_target.inverse_transform(model_best.predict(x)).ravel(),
                                   index=data.index, name='dst_pred')], axis=1)
+    z_best.to_csv(output_filename)
 
     print('Final model:')
-    print(compute_stats_per_year(z))
+    print(compute_stats_per_year(z['dst'], z['dst_pred']))
 
     print('Best model:')
-    print(compute_stats_per_year(z_best))
+    print(compute_stats_per_year(z['dst'], z['dst_pred']))
 
     z.plot(title='Prediction using final model')
 

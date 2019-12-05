@@ -10,9 +10,9 @@ def pressure(x):
 
 
 def vbs(x):
-    vbs = -x['bz']*x['v']*1e-3
-    vbs[vbs < 0] = 0
-    return vbs.rename('vbs')
+    v_bs = -x['bz']*x['v']*1e-3
+    v_bs[v_bs < 0] = 0
+    return v_bs.rename('vbs')
 
 
 def obrien_ak1(x):
@@ -32,8 +32,9 @@ if __name__ == '__main__':
 
     data = read_data()
     z = pd.concat([data['dst'], obrien_ak1(data)], axis=1)
+    z.to_csv('model001.csv')
 
-    print(compute_stats_per_year(z))
+    print(compute_stats_per_year(z['dst'], z['dst_pred']))
 
     z.plot()
 

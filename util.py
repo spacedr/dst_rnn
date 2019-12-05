@@ -7,24 +7,25 @@ def read_data():
     return pd.read_csv('data/omni.csv', index_col='ts', parse_dates=True).interpolate()
 
 
-def bias(x):
-    return np.mean(x['dst_pred']-x['dst'])
+def bias(target, pred):
+    return np.mean(pred-target)
 
 
-def rmse(x):
-    return np.sqrt(np.mean((x['dst']-x['dst_pred'])**2))
+def rmse(target, pred):
+    return np.sqrt(np.mean((pred-target)**2))
 
 
-def corr(x):
-    return x.corr()['dst']['dst_pred']
+def corr(target, pred):
+    return pd.concat([target, pred], axis=1).corr().values[0, 1]
 
 
-def compute_stats_per_year(z):
+def compute_stats_per_year(target, pred):
     stats = []
-    years = set(z.index.year)
+    years = set(target.index.year)
     for y in years:
-        z1 = z[z.index.year==y]
-        stats.append([bias(z1), rmse(z1), corr(z1)])
+        t = target[target.index.year == y]
+        p = pred[pred.index.year == y]
+        stats.append([bias(t, p), rmse(t, p), corr(t, p)])
     return pd.DataFrame(stats, index=years, columns=['BIAS', 'RMSE', 'CORR'])
 
 
@@ -42,7 +43,7 @@ def create_delayed(x, tau):
 
 
 def select_data_for_years(data, years):
-    return pd.concat([data[data.index.year==y] for y in years])
+    return pd.concat([data[data.index.year == y] for y in years])
 
 
 def compute_scalers(data, inputs, target):
@@ -61,8 +62,8 @@ def create_input_target(data, inputs, targets, scaler_input, scaler_target, tau,
     x = x[i]
     y = y[i]
     years = data.index.year[i]
-    x_train = np.vstack([x[years==year] for year in train_years])
-    y_train = np.vstack([y[years==year] for year in train_years])
-    x_val = np.vstack([x[years==year] for year in val_years])
-    y_val = np.vstack([y[years==year] for year in val_years])
+    x_train = np.vstack([x[years == year] for year in train_years])
+    y_train = np.vstack([y[years == year] for year in train_years])
+    x_val = np.vstack([x[years == year] for year in val_years])
+    y_val = np.vstack([y[years == year] for year in val_years])
     return x_train, y_train, x_val, y_val
