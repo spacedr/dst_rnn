@@ -117,9 +117,52 @@ The `scale_` and `mean_` correspond to the standard deviations and means for eac
 The scaling objects are determined separately for the input data (solar wind) and target data (Dst) in the function
 `compute_scalers`.
 
+### Tap delay line
+
+The normal approach to train a recurrent neural network (RNN) with TensorFlow/Keras is to transform the input data using
+tap delay lines (TDL). This is exactly the same approach taken with non-recurrent time delayed neural networks (TDNN),
+but the two network types are different. In the TensorFlow documentation (for example
+https://www.tensorflow.org/guide/keras/rnn) the tap-delay-line axis is called *timesteps*. In principle, the RNN has
+unlimited memory but in practice the maximum trainable memory-length is limited by the length of the TDL. The
+`create_delayed` function in the `util.py` module creates a TDL from a matrix.
+
+    In [1]: from util import create_delayed                                                                                                                                                                                     
+    
+    In [2]: import numpy as np                                                                                                                                                                                                  
+    
+    In [3]: x = np.array([[0, 1], [2, 3], [4, 5], [6, 7]]) # 4 samples, 2 inputs                                                                                                                                                                     
+    
+    In [4]: x.shape                                                                                                                                                                                                             
+    Out[4]: (4, 2)
+    
+    In [5]: y = create_delayed(x, 3) # Creates 4 samples with 2 inputs with 3 tapped delays                                                                                                                                                                                           
+    
+    In [6]: y.shape                                                                                                                                                                                                             
+    Out[6]: (4, 3, 2)
+    
+    In [7]: y                                                                                                                                                                                                                   
+    Out[7]: 
+    array([[[nan, nan],
+            [nan, nan],
+            [nan, nan]],
+    
+           [[nan, nan],
+            [nan, nan],
+            [nan, nan]],
+    
+           [[ 0.,  1.],
+            [ 2.,  3.],
+            [ 4.,  5.]],
+    
+           [[ 2.,  3.],
+            [ 4.,  5.],
+            [ 6.,  7.]]])
+
+
+
 ## Models
 
-### Baseline model
+### Baseline model (model001.py)
 
 It is always useful to have a baseline model against which the neural networks can be compared. Here we will use the AK1
 model by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729). The model is
@@ -141,7 +184,68 @@ Alternatively an IPython session could be started and the program be run
     2001 -7.358677  19.238412  0.836700
     2002 -1.521446  14.104872  0.832688
 
-### Elman network
+As we will use the data before 2001 for training the neural networks we may apply a bias correction to the model using
+the computed bias for the years 1998-2000: 8.6. This will improve RMSE but not CORR.
+
+### Elman network (model002.py)
+
+We will implement the simplest kind of recurrent network, also known as the Elman network or SimpleRNN in TensorFlow.
+This was the RNN implemented in the paper by Lundstedt et al. 2002 
+(https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2002GL016151).
+
+![Dst Elman network](https://agupubs.onlinelibrary.wiley.com/cms/attachment/34122289-ad1d-4359-994a-72920211fd4e/grl16387-fig-0001.png)
+
+The network takes the solar wind Bz, density n, and speed V as inputs and predicts Dst one hour ahead. The network has
+only 4 hidden units and uses the tanh activation function.
+
+In this implementation we will actually predict Dst with **no** lead time, that is, with latest solar wind input at time
+*t* we will predict Dst at time *t*. The reason we do this is that the pressure related increase in Dst (initial phase)
+is directly controlled by the solar wind with no lead time. This is also how the baseline model (model001) is
+implemented.
+
+We set the maximum memory to 48 hours (`tau = 48`). Data for year 2000 are used for training and 2002 for validation.
+Running the model in an IPython session will print the training progress and summary statistics similar to below:
+
+    In [1]: %matplotlib                                                                                                                                                                                                         
+    Using matplotlib backend: MacOSX
+    
+    In [2]: %run model002.py                                                                                                                                                                                                    
+    2019-12-06 16:35:00.312605: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+    2019-12-06 16:35:00.344495: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x1407625d0 executing computations on platform Host. Devices:
+    2019-12-06 16:35:00.344515: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Host, Default Version
+    Train on 8784 samples, validate on 8760 samples
+    Epoch 1/1000
+    8784/8784 [==============================] - 2s 257us/sample - loss: 0.8866 - val_loss: 0.6981
+    Epoch 2/1000
+    8784/8784 [==============================] - 0s 9us/sample - loss: 0.8686 - val_loss: 0.6785
+
+    ...
+    
+    Epoch 999/1000
+    8784/8784 [==============================] - 0s 7us/sample - loss: 0.1441 - val_loss: 0.2960
+    Epoch 1000/1000
+    8784/8784 [==============================] - 0s 7us/sample - loss: 0.1441 - val_loss: 0.2931
+    Final model:
+              BIAS       RMSE      CORR
+    1998  3.565568  13.560642  0.875774
+    1999 -0.512858  12.105195  0.836200
+    2000  0.254705  10.670174  0.924413
+    2001  1.777083  15.659932  0.877618
+    2002  7.376343  15.142497  0.853722
+    Best model:
+              BIAS       RMSE      CORR
+    1998  0.701294  13.980712  0.867888
+    1999 -2.858034  12.585170  0.831248
+    2000 -2.174544  10.990695  0.922874
+    2001 -0.858191  15.329488  0.881886
+    2002  4.860753  14.180491  0.850721
+
+Three plots will also appear showing the training and validation loss (MSE), the predictions using the final network,
+and the predictions using the network with the smallest validation loss. A model checkpoint object
+
+    tf.keras.callbacks.ModelCheckpoint(model_filename, save_best_only=True)
+    
+is used to store the best (smallest validation MSE) to file. The best network may be different from the final network.
 
 ### GRU network
 

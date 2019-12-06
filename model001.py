@@ -15,7 +15,7 @@ def vbs(x):
     return v_bs.rename('vbs')
 
 
-def obrien_ak1(x):
+def obrien_ak1(x, bias=0):
     p = pressure(x)
     v = vbs(x)
     dst_star = np.zeros(len(x) + 1)
@@ -25,17 +25,19 @@ def obrien_ak1(x):
             dst0 = 0
         dst_star[i + 1] = dst0 - 2.47*v.iloc[i] - dst0/17
     dst_star = pd.Series(dst_star[1:], x.index)
-    return (dst_star + 8.74*np.sqrt(p) - 11.5).rename('dst_pred')
+    return (dst_star + 8.74*np.sqrt(p) - 11.5 + bias).rename('dst_pred')
 
 
 if __name__ == '__main__':
 
-    data = read_data()
-    z = pd.concat([data['dst'], obrien_ak1(data)], axis=1)
-    z.to_csv('model001.csv')
+    BIAS_CORRECTION = 0.0  # Change e.g. to 8.6.
 
-    print(compute_stats_per_year(z['dst'], z['dst_pred']))
+    DATA = read_data()
+    Z = pd.concat([DATA['dst'], obrien_ak1(DATA, BIAS_CORRECTION)], axis=1)
+    Z.to_csv('model001.csv')
 
-    z.plot()
+    print(compute_stats_per_year(Z['dst'], Z['dst_pred']))
+
+    Z.plot()
 
     plt.show()

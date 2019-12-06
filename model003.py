@@ -1,26 +1,17 @@
 # Same as model002 but use more training data.
 
-from util import read_data, select_data_for_years, compute_scalers, create_input, create_input_target, compute_stats_per_year
+from util import read_data, select_data_for_years, compute_scalers, create_input, create_input_target, \
+    create_model, compute_stats_per_year
 import matplotlib.pyplot as plt
 import pandas as pd
 import tensorflow as tf
-
-
-def create_model(tau, ni, nh):
-    tf.keras.backend.clear_session()
-    m = tf.keras.Sequential()
-    m.add(tf.keras.layers.Input(shape=(tau, ni), name='input'))
-    m.add(tf.keras.layers.SimpleRNN(nh, activation='tanh', name='hidden'))
-    m.add(tf.keras.layers.Dense(1, name='output'))
-    m.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3))
-    return m
 
 
 if __name__ == '__main__':
 
     filename = 'model003.hdf5'
 
-    inputs = ['b', 'bz', 'n', 'v']
+    inputs = ['bz', 'n', 'v']
     target = ['dst']
 
     train_years, val_years, test_years = [1998, 1999, 2000], [2002], [2001]
@@ -36,7 +27,7 @@ if __name__ == '__main__':
                                                          tau,
                                                          train_years, val_years)
 
-    model = create_model(tau, x_train.shape[-1], num_hidden)
+    model = create_model(tf.keras.layers.SimpleRNN, x_train.shape[-1], num_hidden, tau)
 
     res = model.fit(x_train, y_train,
                     validation_data=(x_val, y_val),

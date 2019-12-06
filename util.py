@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler as Scaler
+import tensorflow as tf
 
 
 def read_data():
@@ -27,6 +28,20 @@ def compute_stats_per_year(target, pred):
         p = pred[pred.index.year == y]
         stats.append([bias(t, p), rmse(t, p), corr(t, p)])
     return pd.DataFrame(stats, index=years, columns=['BIAS', 'RMSE', 'CORR'])
+
+
+def plot_mse(res):
+    return pd.DataFrame(res).plot(logy=True)
+
+
+def create_model(network, num_in, num_hidden, tau, activation='tanh', learning_rate=1e-3):
+    tf.keras.backend.clear_session()
+    m = tf.keras.Sequential()
+    m.add(tf.keras.layers.Input(shape=(tau, num_in), name='input'))
+    m.add(network(num_hidden, activation=activation, unroll=True, name='hidden'))
+    m.add(tf.keras.layers.Dense(1, name='output'))
+    m.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate))
+    return m
 
 
 #################
