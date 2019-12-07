@@ -32,7 +32,7 @@ if __name__ == '__main__':
                     validation_data=(x_val, y_val),
                     callbacks=[tf.keras.callbacks.ModelCheckpoint(model_filename, save_best_only=True)],
                     batch_size=1000,
-                    epochs=1000)
+                    epochs=500)
     pd.DataFrame(res.history).plot(logy=True)
 
     model_best = tf.keras.models.load_model(model_filename)
