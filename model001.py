@@ -15,16 +15,17 @@ def vbs(x):
     return v_bs.rename('vbs')
 
 
-def obrien_ak1(x, bias=0):
+def obrien_ak1(x, bias=0.0):
     p = pressure(x)
     v = vbs(x)
-    dst_star = np.zeros(len(x) + 1)
+    dst_star = np.zeros(len(x))
+    dst0 = 0
     for i in range(len(x)):
-        dst0 = dst_star[i]
         if np.isnan(dst0):
             dst0 = 0
-        dst_star[i + 1] = dst0 - 2.47*v.iloc[i] - dst0/17
-    dst_star = pd.Series(dst_star[1:], x.index)
+        dst_star[i] = dst0 - 2.47*v.iloc[i] - dst0/17
+        dst0 = dst_star[i]
+    dst_star = pd.Series(dst_star, x.index)
     return (dst_star + 8.74*np.sqrt(p) - 11.5 + bias).rename('dst_pred')
 
 
