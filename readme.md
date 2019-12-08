@@ -158,7 +158,15 @@ unlimited memory but in practice the maximum trainable memory-length is limited 
             [ 4.,  5.],
             [ 6.,  7.]]])
 
+### Delay line length
 
+The length of the TDL sets a limit to how far back in time the RNN can model correlated structures. If the length is
+shorter than the memory of the system modelled the RNN will fail, although the RNN in itself does not impose such a
+limit, it is only an effect of how the data is presented. The `memory.py` program can be used to study the effects of
+different TDL lengths. The input data series contain pulses (+1) at random times. The output series will also turn
+positive when the input is positive and stay positive for `TAU_DATA` time steps. The length of the TDL is `TAU_MODEL`.
+Running the program will train the RNN and show some samples of input-target pairs, show the training MSE, and target
+and predicted values. Setting `TAU_MODEL < TAU_DATA` shows what happens when the memory of the model is too short. 
 
 ## Models
 
