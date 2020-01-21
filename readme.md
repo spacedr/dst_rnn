@@ -255,10 +255,23 @@ and the predictions using the network with the smallest validation loss. A model
     
 is used to store the best (smallest validation MSE) to file. The best network may be different from the final network.
 
-### GRU network
+Files `model003.py` and `model004.py` are variations on the Elman network (`model002.py`) but with more training data
+and longer memory, respectively.
 
-### LSTM network
+## Further experimentation
 
-### Simple network simulating the AK1 model.
+### A very simple RNN
+
+In `model005.py` a very simple RNN consisting of only one linear unit is used to demonstrate the connection to the Dst
+differential equation previously discussed. After training one should obtain a time constant of around 15 hours.
+
+### GRU and LSTM
+
+The previous Elman (SimpleRNN) models (files) can be easily copied and edited to implement the GRU and LSTM networks.
 
 ## Summary
+
+The above RNNs illustrate how to set up the models using Keras and Tensorflow. The datasets and models are kept small in
+order to make the training/validation in a short time. The various hyper-parameters have also been set to some
+reasonable values. However, to achieve really good accuracy more data should be used and a thorough hyper-parameter
+search should be done.
