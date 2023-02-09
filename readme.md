@@ -201,7 +201,7 @@ We will implement the simplest kind of recurrent network, also known as the Elma
 This was the RNN implemented in the paper by Lundstedt et al. 2002 
 (https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2002GL016151).
 
-![Dst Elman network](https://agupubs.onlinelibrary.wiley.com/cms/asset/34122289-ad1d-4359-994a-72920211fd4e/grl16387-fig-0001.png)
+![Dst Elman network](https://github.com/spacedr/dst_rnn/blob/master/grl16387-fig-0001.png)
 
 The network takes the solar wind Bz, density n, and speed V as inputs and predicts Dst one hour ahead. The network has
 only 4 hidden units and uses the tanh activation function.
