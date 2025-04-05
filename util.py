@@ -22,7 +22,7 @@ def corr(target, pred):
 
 def compute_stats_per_year(target, pred):
     stats = []
-    years = set(target.index.year)
+    years = sorted(set(target.index.year))
     for y in years:
         t = target[target.index.year == y]
         p = pred[pred.index.year == y]
