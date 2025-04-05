@@ -23,7 +23,7 @@ GRU, and LSTM. We refer to the TensorFlow documentation for a description of the
 
 ## Setup
 
-The code in this tutorial uses Python 3.6. Several packages also needs to be installed, like TensorFlow and Pandas. The
+The code in this tutorial uses Python 3.12. Several packages also needs to be installed, like TensorFlow and Pandas. The
 file `requirements.txt` lists all required packages. They can easily be installed using pip
 
     pip install -r requirements.txt
@@ -33,11 +33,12 @@ requirements file and will be install with the pip command above. When IPython i
 like
 
     $ ipython
-    Python 3.6.5 (v3.6.5:f59c0932b4, Mar 28 2018, 03:03:55) 
+    Python 3.12.1 (main, Dec 16 2023, 15:11:56) [Clang 15.0.0 (clang-1500.1.0.2.5)]
     Type 'copyright', 'credits' or 'license' for more information
-    IPython 7.10.1 -- An enhanced Interactive Python. Type '?' for help.
-
-    In [1]:                                                                                                                                                                            
+    IPython 9.0.2 -- An enhanced Interactive Python. Type '?' for help.
+    Tip: You can use latex or unicode completion, `\alpha<tab>` will insert the α symbol.
+    
+    In [1]: 
 
 ## Data set
 
