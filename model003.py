@@ -9,7 +9,7 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    model_filename = 'model003.hdf5'
+    model_filename = 'model003.keras'
     output_filename = 'model003.csv'
 
     inputs = ['bz', 'n', 'v']

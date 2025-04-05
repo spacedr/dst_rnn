@@ -1,3 +1,5 @@
+# Same as model003 but use V*Bs only as input and target pressure corrected Dst.
+
 from util import read_data, select_data_for_years, compute_scalers, create_input, create_input_target, \
     compute_stats_per_year
 from model001 import pressure, vbs
@@ -18,7 +20,7 @@ def create_model(tau, learning_rate=1e-3):
 
 if __name__ == '__main__':
 
-    model_filename = 'model005.hdf5'
+    model_filename = 'model005.keras'
     output_filename = 'model005.csv'
 
     inputs = ['vbs']

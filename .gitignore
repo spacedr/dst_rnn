@@ -167,3 +167,4 @@ venv.bak/
 
 model*.csv
 model*.hdf5
+model*.keras

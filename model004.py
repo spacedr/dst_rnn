@@ -1,4 +1,4 @@
-# Same as model002 but use more training data.
+# Same as model003 but use longer memory.
 
 from util import read_data, select_data_for_years, compute_scalers, create_input, create_input_target, \
     create_model, compute_stats_per_year
@@ -9,7 +9,7 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    model_filename = 'model004.hdf5'
+    model_filename = 'model004.keras'
     output_filename = 'model004.csv'
 
     inputs = ['bz', 'n', 'v']
