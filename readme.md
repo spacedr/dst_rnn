@@ -274,7 +274,7 @@ $$\frac{d \mathrm{Dst}^{\star}(t)}{dt} = Q(t) - \frac{\mathrm{Dst}^{\star}(t)}{\
 
 were $\mathrm{Dst}^{\star}$ is the pressure corrected $\mathrm{Dst}$, $Q$ the energy injection rate, and $\tau$ the ring current decay time. Here we assume that $Q$ is proportional to the dawn-dusk solar wind electric field $Q = q V B_s$, were $q$ is an empirical coefficient, $V$ is speed, and $B_s = 0$ when $B_z > 0$, and $B_s = -B_z$ when $B_z < 0$. Rewriting the differential equation into discrete form and setting the timestep $dt \approx \Delta t = 1$ hour we get
 
-$$\mathrm{Dst}^*(t+1) = Q(t) + \left( 1 - \frac{1}{\tau} \right) \mathrm{Dst}^*(t)$$
+$$\mathrm{Dst}^{\star}(t+1) = Q(t) + \left( 1 - \frac{1}{\tau} \right) \mathrm{Dst}^{\star}(t)$$
 
 which is equivalent to the RNN with $c = 0$.
 
@@ -284,11 +284,11 @@ $$x = \frac{V B_s - m_x}{s_x}$$
 
 and
 
-$$y = \frac{\mathrm{Dst}^* - m_y}{s_y}$$
+$$y = \frac{\mathrm{Dst}^{\star} - m_y}{s_y}$$
 
 Inserting this into the RNN equation without the bias $c$, and after rearranging the terms, we get
 
-$$\mathrm{Dst}^*(t+1) = a \frac{s_y}{s_x} V(t) B_s(t) + b \mathrm{Dst}^*(t) - a \frac{s_y}{s_x} m_x - b m_y$$
+$$\mathrm{Dst}^{\star}(t+1) = a \frac{s_y}{s_x} V(t) B_s(t) + b \mathrm{Dst}^{\star}(t) - a \frac{s_y}{s_x} m_x - b m_y$$
 
 We now see that the coefficient in the differential equation can be found as
 
@@ -298,7 +298,7 @@ and
 
 $$\left( 1 - \frac{1}{\tau} \right) = b$$
 
-After training one should obtain $q \approx -2.5 \; \mathrm{km}^{-1}$ and $\tau \approx 15 \; \mathrm{hours}$.
+After training one should obtain $q \approx -2.5$ km $^{-1}$ and $\tau \approx 15$ hours.
 
 ### GRU and LSTM
 
