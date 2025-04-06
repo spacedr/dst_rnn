@@ -13,7 +13,7 @@ def create_model(tau, learning_rate=1e-3):
     tf.keras.backend.clear_session()
     m = tf.keras.Sequential()
     m.add(tf.keras.layers.Input(shape=(tau, 1), name='input'))
-    m.add(tf.keras.layers.SimpleRNN(1, activation='linear', unroll=True, name='output'))
+    m.add(tf.keras.layers.SimpleRNN(1, use_bias=False, activation='linear', unroll=True, name='output'))
     m.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate))
     return m
 
