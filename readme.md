@@ -264,7 +264,41 @@ and longer memory, respectively.
 ### A very simple RNN
 
 In `model005.py` a very simple RNN consisting of only one linear unit is used to demonstrate the connection to the Dst
-differential equation previously discussed. After training one should obtain a time constant of around 15 hours.
+differential equation previously discussed. The RNN can be expressed as
+
+$$y_{t+1} = a x_t + b y_t + c$$
+
+were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/bf079730b841598a2fadb97e4fc95ce34a784b5b/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729)
+
+$$\frac{d \mathrm{Dst}^*(t)}{dt} = Q(t) - \frac{\mathrm{Dst}^*(t)}{\tau}$$
+
+were $\mathrm{Dst}^*$ is the pressure corrected $\mathrm{Dst}$, $Q$ the energy injection rate, and $\tau$ the ring current decay time. Here we assume that $Q$ is proportional to the dawn-dusk solar wind electric field $Q = q V B_s$, were $q$ is an empirical coefficient, $V$ is speed, and $B_s = 0$ when $B_z > 0$, and $B_s = -B_z$ when $B_z < 0$. Rewriting the differential equation into discrete form and setting the timestep $dt \approx \Delta t = 1$ hour we get
+
+$$\mathrm{Dst}^*(t+1) = Q(t) + \left( 1 - \frac{1}{\tau} \right) \mathrm{Dst}^*(t)$$
+
+which is equivalent to the RNN with $c = 0$.
+
+To be able to interpret the weights $a$ and $b$ we must take into account the normalisation that have been applied, i.e
+
+$$x = \frac{V B_s - m_x}{s_x}$$
+
+and
+
+$$y = \frac{\mathrm{Dst}^* - m_y}{s_y}$$
+
+Inserting this into the RNN equation without the bias $c$, and after rearranging the terms, we get
+
+$$\mathrm{Dst}^*(t+1) = a \frac{s_y}{s_x} V(t) B_s(t) + b \mathrm{Dst}^*(t) - a \frac{s_y}{s_x} m_x - b m_y$$
+
+We now see that the coefficient in the differential equation can be found as
+
+$$q = a \frac{s_y}{s_x}$$
+
+and
+
+$$\left( 1 - \frac{1}{\tau} \right) = b$$
+
+After training one should obtain $q \approx -2.5 \; \mathrm{km}^{-1}$ and $\tau \approx 15 \; \mathrm{hours}$.
 
 ### GRU and LSTM
 
