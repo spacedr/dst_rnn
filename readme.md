@@ -268,7 +268,7 @@ differential equation previously discussed. The RNN can be expressed as
 
 $$y_{t+1} = a x_t + b y_t + c$$
 
-were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/bf079730b841598a2fadb97e4fc95ce34a784b5b/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729)
+were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/6eb135706c217000281bd4727439825bf691f6ea/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729)
 
 $$\frac{d \mathrm{Dst}^*(t)}{dt} = Q(t) - \frac{\mathrm{Dst}^*(t)}{\tau}$$
 
