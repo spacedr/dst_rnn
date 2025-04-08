@@ -263,10 +263,9 @@ and longer memory, respectively.
 
 ### A very simple RNN
 
-In `model005.py` a very simple RNN consisting of only one linear unit is used to demonstrate the connection to the Dst
-differential equation previously discussed. The RNN can be expressed as
+In `model005.py` a very simple RNN consisting of only one linear unit is used to demonstrate the connection to the Dst differential equation discussed in [Baseline model](#baseline-model-model001py) above. The RNN can be expressed as
 
-$$y_{t+1} = a x_t + b y_t + c$$
+$$y_t = a x_t + b y_{t-1} + c$$
 
 were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/6eb135706c217000281bd4727439825bf691f6ea/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729)
 
