@@ -1,24 +1,24 @@
 # Exploring prediction models for Dst
 
-In this tutorial we will explore different neural networks for the prediction of the Dst index. This problem has been 
+In this tutorial we will explore different neural networks for the prediction of the Dst index. This problem has been
 addressed in numerous studies and therefore serves as a good example.
 
 The Dst index is a measure of the strength of the ring current, a current typically located around the Earth equatorial
-plane at about 3 to 8 Earth radii. The current causes a weakening of the magnetic field at the Earth surface. The Dst 
+plane at about 3 to 8 Earth radii. The current causes a weakening of the magnetic field at the Earth surface. The Dst
 index is computed from magnetic field measurements at four near-equatorial locations. When the ring current increases in
 strength the Dst index becomes more negative. The main driver for the strengthening of the ring current is the transfer
 of energy from the solar wind into Earth's magnetosphere, and the rate of energy transfer is dependent on the conditions
 in the solar wind. A key parameter is the direction of the solar wind magnetic field, when it points southward the
-energy transfer is more efficient. Another process, that is not related to the ring current, that also affects the Dst 
+energy transfer is more efficient. Another process, that is not related to the ring current, that also affects the Dst
 index is the compression of the day-side magnetosphere which causes an increase in Dst. When the Dst index becomes
 strongly negative we label the event as a geomagnetic storm. After the peak of the storm the Dst index decays back
 towards zero with a time constant of 10-20 hours.
 
 We will study models that take solar wind data as input and predicts the Dst index, thus past Dst values will **not** be
-used as inputs. For this purpose we will use solar wind data and Dst index from the OMNI (https://omniweb.gsfc.nasa.gov)
+used as inputs. For this purpose we will use solar wind data and Dst index from the [OMNI](https://omniweb.gsfc.nasa.gov)
 low resolution (hourly) database.
 
-We will explore three types of neural networks using the TensorFlow (https://www.tensorflow.org) package: SimpleRNN,
+We will explore three types of neural networks using the [TensorFlow](https://www.tensorflow.org) package: SimpleRNN,
 GRU, and LSTM. We refer to the TensorFlow documentation for a description of the networks.
 
 ## Setup
@@ -28,7 +28,7 @@ file `requirements.txt` lists all required packages. They can easily be installe
 
     pip install -r requirements.txt
 
-It is also highly recommended to use IPython (https://ipython.org) for any interactive work. It is listed in the
+It is also highly recommended to use [IPython](https://ipython.org) for any interactive work. It is listed in the
 requirements file and will be install with the pip command above. When IPython is launched it will display something
 like
 
@@ -71,10 +71,9 @@ nT, the solar wind proton density `n` (cm^-3), and solar wind speed `v` (km/s). 
 
 Before the data can be used for training the network a couple of data processing steps must be applied.
 
-
 ### Normalisation
 
-The first step is the normalisation of the data so that the numerical ranges of each parameter are similar. We use the 
+The first step is the normalisation of the data so that the numerical ranges of each parameter are similar. We use the
 scaling classes available in the `sklearn.preprocessing` module. The `StandardScaler` class normalises the data
 according to
 
@@ -122,8 +121,7 @@ The scaling objects are determined separately for the input data (solar wind) an
 
 The normal approach to train a recurrent neural network (RNN) with TensorFlow/Keras is to transform the input data using
 tap delay lines (TDL). This is exactly the same approach taken with non-recurrent time delayed neural networks (TDNN),
-but the two network types are different. In the TensorFlow documentation (for example
-https://www.tensorflow.org/guide/keras/rnn) the tap-delay-line axis is called *timesteps*. In principle, the RNN has
+but the two network types are different. In the TensorFlow documentation ([for example](https://www.tensorflow.org/guide/keras/rnn)) the tap-delay-line axis is called *timesteps*. In principle, the RNN has
 unlimited memory but in practice the maximum trainable memory-length is limited by the length of the TDL. The
 `create_delayed` function in the `util.py` module creates a TDL from a matrix.
 
@@ -167,14 +165,14 @@ limit, it is only an effect of how the data is presented. The `memory.py` progra
 different TDL lengths. The input data series contain pulses (+1) at random times. The output series will also turn
 positive when the input is positive and stay positive for `TAU_DATA` time steps. The length of the TDL is `TAU_MODEL`.
 Running the program will train the RNN and show some samples of input-target pairs, show the training MSE, and target
-and predicted values. Setting `TAU_MODEL < TAU_DATA` shows what happens when the memory of the model is too short. 
+and predicted values. Setting `TAU_MODEL < TAU_DATA` shows what happens when the memory of the model is too short.
 
 ## Models
 
 ### Baseline model (model001.py)
 
 It is always useful to have a baseline model against which the neural networks can be compared. Here we will use the AK1
-model by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729). The model is
+model by [O'Brien and McPherron](https://www.sciencedirect.com/science/article/pii/S1364682600000729). The model is
 implemented in the file `model001.py` and can be run as
 
     python model001.py  # Note: assumes Python 3.
@@ -199,8 +197,7 @@ the computed bias for the years 1998-2000: 8.6. This will improve RMSE but not C
 ### Elman network (model002.py)
 
 We will implement the simplest kind of recurrent network, also known as the Elman network or SimpleRNN in TensorFlow.
-This was the RNN implemented in the paper by Lundstedt et al. 2002 
-(https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2002GL016151).
+This was the RNN implemented in the paper by [Lundstedt et al. 2002](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2002GL016151).
 
 ![Dst Elman network](https://github.com/spacedr/dst_rnn/blob/master/grl16387-fig-0001.png)
 
@@ -267,7 +264,7 @@ In `model005.py` a very simple RNN consisting of only one linear unit is used to
 
 $$y_{t+1} = a x_t + b y_t + c$$
 
-were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/6eb135706c217000281bd4727439825bf691f6ea/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by O'Brien and McPherron (https://www.sciencedirect.com/science/article/pii/S1364682600000729)
+were $x_t$ and $y_t$ are the input and output, respectively, at at time step $t$. During training the input weight $a$, the recurrent weight $b$, and the bias $c$ are adjusted to minimise loss. The `use_bias` argument to `SimpleRNN` in [model005.py](https://github.com/spacedr/dst_rnn/blob/6eb135706c217000281bd4727439825bf691f6ea/model005.py#L16) control whether the bias $c$ is included or not. This equation can be compared with the differential equation from by [O'Brien and McPherron](https://www.sciencedirect.com/science/article/pii/S1364682600000729)
 
 $$\frac{d \mathrm{Dst}^{\star}(t)}{dt} = Q(t) - \frac{\mathrm{Dst}^{\star}(t)}{\tau}$$
 
